@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WealthHub | Canadian Finance Calculators</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #22c55e, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
+        }
+
+        .tool-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #0f172a;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--text-main);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .result-box {
+            background: #0f172a;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            border: 1px dashed #475569;
+        }
+
+        .result-box .label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .result-box .amount {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-top: 4px;
+        }
+
+        .btn-cta {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.1s;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+
+        .btn-ws {
+            background: var(--accent-green);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        }
+
+        .btn-eq {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+        .hidden { display: none; }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🍁 Smart Wealth Hub</h1>
+        <p>Calculate your trajectory. Maximize your yields.</p>
+    </header>
+
+    <div class="card">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('invest')">Investing (Wealthsimple)</button>
+            <button class="tab-btn" onclick="switchTab('savings')">Savings (EQ Bank)</button>
+        </div>
+
+        <!-- Wealthsimple Section -->
+        <div id="invest-panel">
+            <div class="tool-title">📈 Compound Interest Simulator</div>
+            <div class="input-group">
+                <label>Monthly Contribution ($)</label>
+                <input type="number" id="ws-monthly" value="250" oninput="calcWealth()">
+            </div>
+            <div class="input-group">
+                <label>Years of Growth</label>
+                <input type="number" id="ws-years" value="15" oninput="calcWealth()">
+            </div>
+            <div class="result-box">
+                <div class="label">Estimated Portfolio Value (at 7% return)</div>
+                <div class="amount" id="ws-total">$79,481</div>
+            </div>
+        </div>
+
+        <!-- EQ Bank Section -->
+        <div id="savings-panel" class="hidden">
+            <div class="tool-title">💰 High-Yield Savings Calculator</div>
+            <div class="input-group">
+                <label>Emergency Fund Balance ($)</label>
+                <input type="number" id="eq-balance" value="10000" oninput="calcSavings()">
+            </div>
+            <div class="result-box">
+                <div class="label">Annual Interest Earned (vs ~$5 at old banks)</div>
+                <div class="amount" id="eq-total" style="color: var(--accent-blue);">$400</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Buttons -->
+    <a href="YOUR_WEALTHSIMPLE_LINK" target="_blank" class="btn-cta btn-ws">
+        🚀 Get Your Wealthsimple Sign-Up Bonus
+    </a>
+    <a href="YOUR_EQBANK_LINK" target="_blank" class="btn-cta btn-eq">
+        💳 Open a No-Fee EQ Bank Account
+    </a>
+
+    <footer>
+        <p>Calculations assume standard rates. Bookmark this tool to track your milestones.</p>
+    </footer>
+</div>
+
+<script>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(tab === 'invest') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('invest-panel').classList.remove('hidden');
+            document.getElementById('savings-panel').classList.add('hidden');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('invest-panel').classList.add('hidden');
+            document.getElementById('savings-panel').classList.remove('hidden');
+        }
+    }
+
+    function calcWealth() {
+        const pmt = parseFloat(document.getElementById('ws-monthly').value) || 0;
+        const yrs = parseFloat(document.getElementById('ws-years').value) || 0;
+        const r = 0.07 / 12;
+        const n = yrs * 12;
+        let total = n > 0 ? pmt * ((Math.pow(1 + r, n) - 1) / r) * (1 + r) : 0;
+        document.getElementById('ws-total').textContent = '$' + Math.round(total).toLocaleString('en-CA');
+    }
+
+    function calcSavings() {
+        const bal = parseFloat(document.getElementById('eq-balance').value) || 0;
+        let total = bal * 0.04; // Assuming 4% yield
+        document.getElementById('eq-total').textContent = '$' + Math.round(total).toLocaleString('en-CA');
+    }
+</script>
+</body>
+</html>
